@@ -1,0 +1,15 @@
+{
+  "name": "grunt-install-workspace-deps",
+  "version": "0.1.0",
+  "description": "Grunt task that 'npm install' all dependencies of modules present in the same folder (workspace)",
+  "keywords": [
+    "grunt",
+    "npm",
+    "install"
+  ],
+  "author": "Sierra Wireless",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^0.9.0"
+  }
+}
