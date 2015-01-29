@@ -1,7 +1,6 @@
 "use strict";
 
 module.exports = function(grunt) {
-    var exec = require("child_process").exec;
     var async = require("async");
 
     /**
@@ -20,49 +19,43 @@ module.exports = function(grunt) {
     }
 
     /**
-     * Create the "npm install" cmd to install the module dependencies
+     * Create the "node_modules" deletion cmd to remove the module dependencies
      *
      * @param  {String} module,
      *
      * @return {Function}
      */
-    function installModuleCmd(module) {
+    function cleanModuleDepsCmd(module) {
 
         return function(cb) {
-            grunt.log.subhead("Install '" + module + "' dependencies");
+            grunt.log.subhead("Clean '" + module + "' dependencies");
 
             // Temporarily change CW to the current module dir
             var prevCWD = process.cwd();
             grunt.file.setBase(module);
 
-            grunt.verbose.writeln("npm install");
-            exec("npm install", function(error, stdout) {
-                if (error) {
-                    grunt.log.error(error);
-                }
-                grunt.verbose.ok(stdout);
-                grunt.file.setBase(prevCWD);
-                // Cleaning CWD
-                cb();
-            });
+            grunt.verbose.writeln("Remove 'node_modules' folder");
+            grunt.file.delete("node_modules");
+            grunt.file.setBase(prevCWD);
+            // Cleaning CWD
+            cb();
         };
     }
 
-    grunt.registerTask("install-workspace-deps", "Install all workspace dependencies.", function() {
+    grunt.registerTask("clean-workspace-deps", "Clean all workspace dependencies.", function() {
         var done = this.async();
+        grunt.log.subhead("Clean all modules dependencies");
 
-        grunt.log.subhead("Install all modules dependencies");
-
-        var installCmds = [];
+        var cleanCmds = [];
         // Loop through all 1st level folders
         grunt.file.expand(["*", "!node_modules"]).forEach(function(moduleDir) {
             if (grunt.file.isDir(moduleDir) && isModule(moduleDir)) {
-                installCmds.push(installModuleCmd(moduleDir));
+                cleanCmds.push(cleanModuleDepsCmd(moduleDir));
             }
         });
 
-        // Execute the "npm install" commands
-        async.series(installCmds, function(error) {
+        // Execute the "node_modules" folders deletion commands
+        async.series(cleanCmds, function(error) {
             done(error);
         });
     });
