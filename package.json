@@ -1,6 +1,6 @@
 {
   "name": "grunt-install-workspace-deps",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Grunt task that 'npm install' all dependencies of modules present in the same folder (workspace)",
   "repository": {
     "type": "git",
