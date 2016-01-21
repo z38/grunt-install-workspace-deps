@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = function(grunt) {
+    var exec = require("child_process").exec;
     var async = require("async");
 
     /**
@@ -30,15 +31,16 @@ module.exports = function(grunt) {
         return function(cb) {
             grunt.log.subhead("Clean '" + module + "' dependencies");
 
-            // Temporarily change CW to the current module dir
-            var prevCWD = process.cwd();
-            grunt.file.setBase(module);
-
             grunt.verbose.writeln("Remove 'node_modules' folder");
-            grunt.file.delete("node_modules");
-            grunt.file.setBase(prevCWD);
-            // Cleaning CWD
-            cb();
+            exec("rm -rf " + module + "/node_modules", function(error, stdout) {
+                if (error) {
+                    grunt.log.error(error);
+                }
+                grunt.log.subhead("'" + module + "' cleaned");
+                grunt.verbose.ok(stdout);
+                // Cleaning CWD
+                cb();
+            });
         };
     }
 
@@ -55,7 +57,7 @@ module.exports = function(grunt) {
         });
 
         // Execute the "node_modules" folders deletion commands
-        async.series(cleanCmds, function(error) {
+        async.parallel(cleanCmds, function(error) {
             done(error);
         });
     });
