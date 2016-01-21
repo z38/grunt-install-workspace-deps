@@ -41,10 +41,11 @@ module.exports = function(grunt) {
                     grunt.log.error(error);
                 }
                 grunt.verbose.ok(stdout);
-                grunt.file.setBase(prevCWD);
                 // Cleaning CWD
                 cb();
             });
+
+            grunt.file.setBase(prevCWD);
         };
     }
 
@@ -62,7 +63,7 @@ module.exports = function(grunt) {
         });
 
         // Execute the "npm install" commands
-        async.series(installCmds, function(error) {
+        async.parallel(installCmds, function(error) {
             done(error);
         });
     });
